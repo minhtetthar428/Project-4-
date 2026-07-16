@@ -1,4 +1,4 @@
-          <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="my">
 <head>
     <meta charset="UTF-8">
@@ -8,139 +8,121 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2pdf.js (Optimized for Canvas Rendering) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         body {
-            font-family: 'Padauk', 'Plus Jakarta Sans', sans-serif;
-            background-color: #f4f7f5;
-        }
-        /* Print Styles: PDF ထုတ်တဲ့အခါ ဇယားကွက်နဲ့ လိုအပ်တာတွေပဲ သေသပ်လှပစွာ ပါသွားစေရန် */
-        @media print {
-            body {
-                background: white !important;
-                color: black !important;
-            }
-            /* Print မထုတ်ချင်တဲ့ အစိတ်အပိုင်းတွေ ဖျောက်ထားရန် */
-            nav, .lg\:col-span-1, canvas, button, [data-html2pdf-ignore="true"] {
-                display: none !important;
-            }
-            .lg\:col-span-2 {
-                width: 100% !important;
-            }
-            #pdfPrintArea {
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
+            font-family: 'Plus Jakarta Sans', 'Padauk', sans-serif;
+            background-color: #f8fafc;
         }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen pb-16 antialiased">
 
     <!-- Top Navigation Bar -->
-    <nav class="border-b border-emerald-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 shadow-sm">
+    <nav class="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 shadow-sm">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                    <span class="text-white text-xl">💵</span>
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <span class="text-white text-xl">💳</span>
                 </div>
                 <div>
-                    <h1 class="text-base font-extrabold tracking-wide text-slate-900">အဖွဲ့ဝင် (၁၀) ဦး အသုံးစရိတ် ရှင်းတမ်း</h1>
-                    <p class="text-[11px] text-emerald-600 font-bold">BATCH EXPENSE SETTLEMENT SYSTEM</p>
+                    <h1 class="text-base font-extrabold tracking-tight text-slate-900">အဖွဲ့ဝင် (၁၀) ဦး အသုံးစရိတ် ရှင်းတမ်း</h1>
+                    <p class="text-[10px] text-indigo-600 font-extrabold tracking-widest uppercase">Digital Settlement Voucher</p>
                 </div>
             </div>
             
             <!-- Admin Authorization Button -->
-            <button id="adminBtn" onclick="toggleAdminMode()" class="px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 flex items-center gap-2">
+            <button id="adminBtn" onclick="toggleAdminMode()" class="px-5 py-2.5 text-xs font-extrabold rounded-full transition-all duration-300 border border-indigo-100 bg-indigo-50/50 hover:bg-indigo-100/80 text-indigo-700 flex items-center gap-2 shadow-sm hover:shadow-md">
                 <span id="lockIcon">🔒</span> <span id="adminBtnText">Admin ဝင်မည်</span>
             </button>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <main class="max-w-6xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- Left Column: Summary Cards & Inputs -->
+        <!-- Left Column: Settings, Form & All-Time Total -->
         <div class="lg:col-span-1 flex flex-col gap-6">
             
-            <!-- Selector & Grand Total -->
-            <div class="rounded-3xl bg-white border border-emerald-50 p-6 shadow-sm">
-                <label class="block text-xs font-extrabold text-emerald-700 mb-3 uppercase tracking-wider">📁 စာရင်းကာလ ရွေးချယ်ရန်</label>
-                <select id="batchSelector" onchange="changeBatch(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-800 font-bold focus:outline-none focus:border-emerald-500 transition-all">
+            <!-- Selector & Grand Total Card -->
+            <div class="rounded-3xl bg-white border border-slate-100 p-6 shadow-sm">
+                <label class="block text-[10px] font-black text-slate-400 mb-3 uppercase tracking-wider">📁 စာရင်းကာလ ရွေးချယ်ရန်</label>
+                <select id="batchSelector" onchange="changeBatch(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-800 font-bold focus:outline-none focus:border-indigo-500 transition-all">
                     <option value="active">⏳ လက်ရှိ ဖွင့်ထားဆဲစာရင်း</option>
                 </select>
 
                 <!-- All-Time Grand Total -->
-                <div class="mt-5 pt-5 border-t border-slate-100">
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">စုစုပေါင်း သုံးစွဲခဲ့သမျှ (အလုံးစုံခြုံငုံချက်)</p>
+                <div class="mt-6 pt-5 border-t border-slate-100">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">စုစုပေါင်း သုံးစွဲခဲ့သမျှ (အလုံးစုံခြုံငုံချက်)</p>
                     <div class="flex justify-between items-baseline mt-1">
-                        <span class="text-2xl font-black text-emerald-700" id="grandTotal">၀ ကျပ်</span>
-                        <span class="text-xs font-bold text-slate-400">(All-Time Total)</span>
+                        <span class="text-2xl font-black tracking-tight text-indigo-600 animate-pulse" id="grandTotal">၀ ကျပ်</span>
+                        <span class="text-[10px] font-bold text-slate-400">(All-Time Total)</span>
                     </div>
                 </div>
             </div>
 
             <!-- Current Batch Summary Card -->
-            <div class="rounded-3xl bg-emerald-600 p-6 shadow-md shadow-emerald-700/10 text-white relative overflow-hidden">
-                <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500 rounded-full opacity-20"></div>
-                <p class="text-xs text-emerald-100 font-bold uppercase tracking-wider" id="summaryCardTitle">လက်ရှိကာလ ကုန်ကျစရိတ်</p>
-                <h3 class="text-3xl font-black mt-2" id="totalExpense">၀ ကျပ်</h3>
+            <div class="rounded-3xl bg-slate-900 p-6 shadow-xl text-white relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-28 h-28 bg-indigo-600 rounded-full opacity-20 blur-xl"></div>
+                <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest" id="summaryCardTitle">လက်ရှိကာလ ကုန်ကျစရိတ်</p>
+                <h3 class="text-3xl font-black tracking-tight mt-2 text-indigo-400" id="totalExpense">၀ ကျပ်</h3>
                 
-                <div class="mt-5 pt-4 border-t border-white/10 flex justify-between items-center text-xs text-emerald-100">
-                    <span>၁ ဦးလျှင် ကျသင့်ငွေ (၁၀ ဦးခွဲ):</span>
+                <div class="mt-6 pt-5 border-t border-slate-800 flex justify-between items-center text-xs">
+                    <span class="text-slate-400 font-medium">၁ ဦးလျှင် ကျသင့်ငွေ (၁၀ ဦးခွဲ):</span>
                     <span class="font-extrabold text-white text-base" id="perPersonExpense">၀ ကျပ်</span>
                 </div>
             </div>
 
             <!-- Admin Entry Form -->
-            <div id="adminFormCard" class="hidden rounded-3xl bg-white border border-emerald-100 p-6 shadow-sm">
+            <div id="adminFormCard" class="hidden rounded-3xl bg-white border border-indigo-100 p-6 shadow-sm transition-all duration-300">
                 <div class="flex items-center gap-2 mb-5 border-b border-slate-100 pb-3">
-                    <span class="text-emerald-600">📝</span>
-                    <h2 class="text-sm font-bold text-slate-800">အသုံးစရိတ်အသစ် ထည့်ရန်</h2>
+                    <span class="text-indigo-600 text-lg">📝</span>
+                    <h2 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">အသုံးစရိတ်အသစ် ထည့်ရန်</h2>
                 </div>
                 
                 <form id="expenseForm" onsubmit="saveExpense(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">ရက်စွဲ</label>
-                        <input type="date" id="expDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-emerald-500">
+                        <input type="date" id="expDate" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">အသုံးပြုသည့် အကြောင်းအရာ</label>
-                        <input type="text" id="expTitle" placeholder="ဥပမာ - နေ့လည်စာ စားစရိတ်" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="expTitle" placeholder="ဥပမာ - စာရွက်စာတမ်း Print ဖိုး" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-indigo-500">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">ကျသင့်ငွေ (ကျပ်)</label>
-                        <input type="number" id="expAmount" placeholder="ဥပမာ - ၂၅၀၀၀" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+                        <input type="number" id="expAmount" placeholder="ဥပမာ - ၂၅၀၀၀" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:border-indigo-500">
                     </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] transition-all text-white font-bold text-sm py-3 rounded-xl shadow-lg shadow-emerald-600/15">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all text-white font-extrabold text-xs uppercase tracking-wider py-3.5 rounded-full shadow-lg shadow-indigo-600/20">
                         စာရင်းထဲသို့ ထည့်သွင်းမည်
                     </button>
                 </form>
 
-                <!-- Settlement Button -->
+                <!-- Settlement Close Button -->
                 <div class="mt-6 pt-5 border-t border-dashed border-slate-200">
-                    <button onclick="settleCurrentBatch()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
+                    <button onclick="settleCurrentBatch()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs uppercase tracking-wider py-3.5 rounded-full transition-all flex items-center justify-center gap-2 shadow-md shadow-rose-600/10">
                         🔒 လက်ရှိစာရင်းကို အပြီးပိတ်သိမ်းမည်
                     </button>
-                    <p class="text-[11px] text-slate-400 mt-2 text-center">ပိတ်သိမ်းပြီးပါက ဤစာရင်းသည် သမိုင်းမှတ်တမ်းထဲသို့ ရောက်သွားပြီး ဒေတာအသစ် ပြန်စပါမည်။</p>
+                    <p class="text-[10px] text-slate-400 mt-2 text-center">ပိတ်သိမ်းပြီးပါက ဤစာရင်းသည် သမိုင်းမှတ်တမ်းထဲသို့ ရောက်ရှိသိမ်းဆည်းသွားမည်။</p>
                 </div>
             </div>
 
-            <!-- Visitor Block -->
+            <!-- Visitor Notice Block -->
             <div id="visitorNotice" class="rounded-3xl bg-slate-50 border border-slate-200 p-5 text-center text-xs text-slate-500">
                 ⚠️ သင်သည် စာရင်းများကို ကြည့်ရှုခြင်းနှင့် PDF ထုတ်ယူခြင်းသာ ပြုလုပ်နိုင်ပါသည်။
             </div>
 
         </div>
 
-        <!-- Right Column: Graphs & PDF printable Data Table -->
-        <div class="lg:col-span-2 flex flex-col gap-6">
+        <!-- Right Column: Graph & Digital Receipt Voucher -->
+        <div class="lg:col-span-2 flex flex-col gap-8">
             
             <!-- Chart Card -->
             <div class="rounded-3xl bg-white border border-slate-100 p-6 shadow-sm">
-                <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
+                <h3 class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-wider flex items-center gap-2">
                     📈 <span id="chartTitle">နေ့စဉ်သုံးစွဲမှုဂရပ်</span>
                 </h3>
                 <div class="h-44">
@@ -148,49 +130,73 @@
                 </div>
             </div>
 
-            <!-- Print/PDF Container -->
-            <div id="pdfPrintArea" class="rounded-3xl bg-white border border-emerald-50 p-6 shadow-sm">
+            <!-- Receipt Voucher Layout Container -->
+            <div class="relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm overflow-hidden" id="pdfPrintArea">
                 
-                <!-- Print Header Info -->
-                <div class="flex justify-between items-start mb-6 border-b border-slate-100 pb-5">
-                    <div>
-                        <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full uppercase tracking-widest" id="pdfBatchBadge">ACTIVE SESSION</span>
-                        <h3 class="text-lg font-black text-slate-800 mt-2">အဖွဲ့ဝင်များ အသုံးစရိတ် ရှင်းတမ်းစာရင်း</h3>
-                        <p class="text-xs text-slate-400 mt-1" id="pdfDateGenerated"></p>
+                <!-- Receipt Header (Top Dotted Border) -->
+                <div class="border-b-2 border-dashed border-slate-200 pb-6 mb-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[9px] font-black bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full uppercase tracking-widest" id="pdfBatchBadge">ACTIVE SESSION</span>
+                            <h3 class="text-xl font-black text-slate-800 mt-3">အဖွဲ့ဝင်များ အသုံးစရိတ် ဘောင်ချာရှင်းတမ်း</h3>
+                            <p class="text-[11px] text-slate-400 mt-1" id="pdfDateGenerated"></p>
+                        </div>
+                        
+                        <!-- PDF Export Button -->
+                        <button data-html2pdf-ignore="true" onclick="exportToPDF()" class="px-5 py-2.5 text-xs font-extrabold rounded-full border border-indigo-600 bg-white hover:bg-indigo-50 text-indigo-600 flex items-center gap-2 transition-all shadow-sm">
+                            📥 PDF ရယူမည်
+                        </button>
                     </div>
-                    
-                    <!-- Print Trigger (Fades automatically on Print preview) -->
-                    <button onclick="exportToPDF()" class="px-4 py-2 text-xs font-bold rounded-xl border border-emerald-600 bg-white hover:bg-emerald-50 text-emerald-600 flex items-center gap-2 transition-all">
-                        🖨️ PDF စလစ် ထုတ်ယူမည်
-                    </button>
                 </div>
 
-                <!-- Printable Table -->
+                <!-- Voucher Body Info -->
+                <div class="flex justify-between text-xs text-slate-500 mb-6 font-semibold">
+                    <div>ရှင်းတမ်းအမှတ်: <span class="text-slate-800 font-extrabold" id="voucherNo">#BATCH-ACT</span></div>
+                    <div class="text-right">အဖွဲ့ဝင်ဦးရေ: <span class="text-slate-800 font-extrabold">၁၀ ဦး (ဆယ်ဦး)</span></div>
+                </div>
+
+                <!-- Voucher Table Grid -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-700 border-collapse">
+                    <table class="w-full text-left text-xs text-slate-700 border-collapse">
                         <thead>
-                            <tr class="text-slate-500 text-xs font-bold bg-slate-50 border-b border-slate-200">
-                                <th class="py-3.5 px-4 rounded-l-xl">ရက်စွဲ</th>
-                                <th class="py-3.5 px-4">အကြောင်းအရာ</th>
-                                <th class="py-3.5 px-4 text-right">ကျသင့်ငွေ</th>
-                                <th class="py-3.5 px-4 text-center admin-action hidden rounded-r-xl">လုပ်ဆောင်ချက်</th>
+                            <tr class="text-slate-400 font-black uppercase tracking-wider border-b border-slate-200 text-[10px] bg-slate-50/50">
+                                <th class="py-3 px-4">ရက်စွဲ</th>
+                                <th class="py-3 px-4">အကြောင်းအရာ</th>
+                                <th class="py-3 px-4 text-right">ကျသင့်ငွေ</th>
+                                <th class="py-3 px-4 text-center admin-action hidden">လုပ်ဆောင်ချက်</th>
                             </tr>
                         </thead>
                         <tbody id="expenseTableBody" class="divide-y divide-slate-100">
-                            <!-- Injected dynamically -->
+                            <!-- Dynamically loaded entries -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- PDF Summary Footer Panel -->
-                <div class="mt-6 p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100/50 grid grid-cols-2 gap-4 text-xs">
+                <!-- Receipt Bottom Dash/Cut Line -->
+                <div class="border-t-2 border-dashed border-slate-200 my-6 pt-6">
+                    <div class="grid grid-cols-2 gap-4 text-xs p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div>
+                            <p class="text-slate-400 font-bold uppercase tracking-wider">ရှင်းတမ်း စုစုပေါင်းကုန်ကျငွေ</p>
+                            <p class="text-xl font-black text-slate-950 mt-1" id="pdfTotalText">၀ ကျပ်</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-slate-400 font-bold uppercase tracking-wider">၁ ဦးလျှင် ကျသင့်ငွေ</p>
+                            <p class="text-xl font-black text-indigo-600 mt-1" id="pdfPerPersonText">၀ ကျပ်</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Receipt Footer (Signature area & Barcode) -->
+                <div class="flex justify-between items-center mt-8 text-[11px] text-slate-400">
                     <div>
-                        <p class="text-emerald-800 font-bold uppercase tracking-wide">ရှင်းတမ်း စုစုပေါင်းကုန်ကျငွေ</p>
-                        <p class="text-xl font-black text-slate-950 mt-1" id="pdfTotalText">၀ ကျပ်</p>
+                        <p class="font-bold text-slate-600">ထုတ်ပေးသူ - Admin</p>
+                        <p class="mt-0.5">Approved Digitally</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-slate-500 font-bold uppercase tracking-wide">၁ ဦးလျှင် ကျသင့်ငွေ (၁၀ ဦးခွဲ)</p>
-                        <p class="text-xl font-black text-emerald-600 mt-1" id="pdfPerPersonText">၀ ကျပ်</p>
+                        <div class="h-5 w-28 bg-slate-200 rounded flex items-center justify-center text-[9px] font-mono tracking-widest text-slate-500 border border-slate-300">
+                            ||| | || |||| | |
+                        </div>
+                        <p class="text-[9px] mt-1 text-slate-400">ID: PROJECT-4-SECURE</p>
                     </div>
                 </div>
 
@@ -199,7 +205,7 @@
 
     </main>
 
-    <!-- Firebase SDK Legacy -->
+    <!-- Firebase Legacy compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -224,7 +230,8 @@
         let allDataSnapshot = null;
         let expenseChartInstance = null;
         
-        const ADMIN_PASSWORD = "mysecretpassword123"; 
+        // Admin Password ကို 205428 သို့ ပြောင်းလဲထားပါသည်
+        const ADMIN_PASSWORD = "205428"; 
 
         document.getElementById('expDate').valueAsDate = new Date();
 
@@ -285,7 +292,7 @@
             document.getElementById('grandTotal').innerText = formatMyanmarCurrency(grandTotal);
         }
 
-        // --- ၇။ UI Updates ---
+        // --- ၇။ UI & Voucher Updates ---
         function updateDashboard() {
             const tbody = document.getElementById('expenseTableBody');
             tbody.innerHTML = '';
@@ -298,6 +305,7 @@
                 document.getElementById('summaryCardTitle').innerText = "လက်ရှိကာလ ကုန်ကျစရိတ်";
                 document.getElementById('pdfBatchBadge').innerText = "ACTIVE SESSION";
                 document.getElementById('chartTitle').innerText = "လက်ရှိကာလ နေ့စဉ်သုံးစွဲမှုဂရပ်";
+                document.getElementById('voucherNo').innerText = "#BATCH-ACT";
                 
                 const data = allDataSnapshot.active_expenses;
                 if (data) {
@@ -309,6 +317,8 @@
                 document.getElementById('summaryCardTitle').innerText = "ရွေးချယ်ထားသော ကာလဟောင်းစရိတ်";
                 document.getElementById('pdfBatchBadge').innerText = "ARCHIVED STATEMENT";
                 document.getElementById('chartTitle').innerText = "၎င်းကာလ၏ နေ့စဉ်သုံးစွဲမှုဂရပ်";
+                // Get slice ID for unique voucher number
+                document.getElementById('voucherNo').innerText = `#BATCH-${selectedBatch.substring(1, 8).toUpperCase()}`;
 
                 const batch = allDataSnapshot.archived_batches ? allDataSnapshot.archived_batches[selectedBatch] : null;
                 if (batch && batch.expenses) {
@@ -328,13 +338,13 @@
                     chartData[item.date] = (chartData[item.date] || 0) + Number(item.amount);
 
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition-colors duration-150";
+                    tr.className = "hover:bg-slate-50 transition-colors duration-150 text-slate-700";
                     tr.innerHTML = `
-                        <td class="py-3 px-4 text-xs font-semibold text-slate-500">${toMyanmarNumbers(item.date)}</td>
-                        <td class="py-3 px-4 text-xs font-bold text-slate-800">${item.title}</td>
-                        <td class="py-3 px-4 text-right font-extrabold text-emerald-600">${formatMyanmarCurrency(item.amount)}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-500">${toMyanmarNumbers(item.date)}</td>
+                        <td class="py-3 px-4 font-bold text-slate-800">${item.title}</td>
+                        <td class="py-3 px-4 text-right font-extrabold text-indigo-600">${formatMyanmarCurrency(item.amount)}</td>
                         <td class="py-3 px-4 text-center admin-action ${isAdmin && selectedBatch === 'active' ? '' : 'hidden'}">
-                            <button onclick="deleteExpense('${item.id}')" class="text-red-600 hover:text-red-700 font-bold text-xs bg-red-50 px-2.5 py-1 rounded-lg transition">
+                            <button onclick="deleteExpense('${item.id}')" class="text-rose-600 hover:text-rose-700 font-bold text-[10px] bg-rose-50 px-3 py-1 rounded-full transition">
                                 ဖျက်ရန်
                             </button>
                         </td>
@@ -356,7 +366,7 @@
             renderChart(chartData);
         }
 
-        // --- ၈။ Chart.js Graphics Config ---
+        // --- ၈။ Chart.js Configuration ---
         function renderChart(chartData) {
             const sortedDates = Object.keys(chartData).sort((a, b) => new Date(a) - new Date(b));
             const chartLabels = sortedDates.map(d => toMyanmarNumbers(d));
@@ -371,13 +381,13 @@
                     labels: chartLabels,
                     datasets: [{
                         data: chartValues,
-                        borderColor: '#059669',
-                        backgroundColor: 'rgba(5, 150, 105, 0.03)',
-                        borderWidth: 2,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.03)',
+                        borderWidth: 2.5,
                         fill: true,
-                        tension: 0.1,
+                        tension: 0.15,
                         pointRadius: 2,
-                        pointBackgroundColor: '#059669'
+                        pointBackgroundColor: '#4f46e5'
                     }]
                 },
                 options: {
@@ -400,8 +410,8 @@
                     isAdmin = true;
                     alert("Admin စနစ်ပွင့်သွားပါပြီ။");
                     
-                    document.getElementById('adminBtn').classList.replace('bg-emerald-50', 'bg-emerald-600');
-                    document.getElementById('adminBtn').classList.replace('text-emerald-700', 'text-white');
+                    document.getElementById('adminBtn').classList.replace('bg-indigo-50/50', 'bg-indigo-600');
+                    document.getElementById('adminBtn').classList.replace('text-indigo-700', 'text-white');
                     document.getElementById('lockIcon').innerText = "🔓";
                     document.getElementById('adminBtnText').innerText = "Admin ဝင်ထားသည်";
                     
@@ -413,8 +423,8 @@
                 }
             } else {
                 isAdmin = false;
-                document.getElementById('adminBtn').classList.replace('bg-emerald-600', 'bg-emerald-50');
-                document.getElementById('adminBtn').classList.replace('text-white', 'text-emerald-700');
+                document.getElementById('adminBtn').classList.replace('bg-indigo-600', 'bg-indigo-50/50');
+                document.getElementById('adminBtn').classList.replace('text-white', 'text-indigo-700');
                 document.getElementById('lockIcon').innerText = "🔒";
                 document.getElementById('adminBtnText').innerText = "Admin ဝင်မည်";
                 
@@ -473,12 +483,28 @@
             }
         }
 
-        // --- ၁၂။ System Native PDF Print Engine (No Library Bug) ---
+        // --- ၁၂။ PDF Auto-Download Engine (Optimized & Pure PDF Generation) ---
         function exportToPDF() {
-            // Native print utility ensures all fonts, colors, rendering sizes match perfectly on both mobile and PC.
-            window.print();
+            // PDF Generation container Setup
+            const element = document.getElementById('pdfPrintArea');
+            
+            // Temporary styles adjustment specifically during generation to guarantee full contrast & avoid blank pages
+            const opt = {
+                margin:       10,
+                filename:     `Voucher-Statement-${selectedBatch}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    letterRendering: true,
+                    backgroundColor: '#ffffff'
+                },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            // Direct true PDF download action
+            html2pdf().set(opt).from(element).save();
         }
     </script>
 </body>
 </html>
-                              
